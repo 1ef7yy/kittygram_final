@@ -1,6 +1,6 @@
 ﻿import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { api } from "../../utils/Api";
+import { api } from "../../utils/api";
 import "./sign-in.css";
 
 function SignIn({ handleLogin }) {
@@ -62,3 +62,4 @@ function SignIn({ handleLogin }) {
 }
 
 export default SignIn;
+

@@ -1,4 +1,4 @@
-import React from "react";
+﻿import React from "react";
 import { useHistory, NavLink } from "react-router-dom";
 
 import { registerUser } from "../../utils/api";
@@ -28,19 +28,19 @@ export const SignUp = ({ extraClass = "" }) => {
 
   const checkValid = () => {
     if (!userData.username) {
-      setErrorLogin("Поле с именем является обязательным");
+      setErrorLogin("РџРѕР»Рµ СЃ РёРјРµРЅРµРј СЏРІР»СЏРµС‚СЃСЏ РѕР±СЏР·Р°С‚РµР»СЊРЅС‹Рј");
       return false;
     }
     if (!userData.password) {
-      setErrorPassword("Поле с паролем является обязательным");
+      setErrorPassword("РџРѕР»Рµ СЃ РїР°СЂРѕР»РµРј СЏРІР»СЏРµС‚СЃСЏ РѕР±СЏР·Р°С‚РµР»СЊРЅС‹Рј");
       return false;
     }
     if (!userData.password2) {
-      setErrorDoublePassword("Поле с паролем является обязательным");
+      setErrorDoublePassword("РџРѕР»Рµ СЃ РїР°СЂРѕР»РµРј СЏРІР»СЏРµС‚СЃСЏ РѕР±СЏР·Р°С‚РµР»СЊРЅС‹Рј");
       return false;
     }
     if (userData.password !== userData.password2) {
-      setErrorDoublePassword("Пароли не совпадают!");
+      setErrorDoublePassword("РџР°СЂРѕР»Рё РЅРµ СЃРѕРІРїР°РґР°СЋС‚!");
       return false;
     }
     return true;
@@ -60,29 +60,29 @@ export const SignUp = ({ extraClass = "" }) => {
         })
         .catch((err) => {
           if (typeof err.username === "object") {
-            setErrorLogin("Пользователь с таким именем уже зарегистрирован");
+            setErrorLogin("РџРѕР»СЊР·РѕРІР°С‚РµР»СЊ СЃ С‚Р°РєРёРј РёРјРµРЅРµРј СѓР¶Рµ Р·Р°СЂРµРіРёСЃС‚СЂРёСЂРѕРІР°РЅ");
           } else if (typeof err.password === "object") {
             setErrorPassword(
-              "Пароль должен содержать минимум 8 символов и не состоять полностью из цифр"
+              "РџР°СЂРѕР»СЊ РґРѕР»Р¶РµРЅ СЃРѕРґРµСЂР¶Р°С‚СЊ РјРёРЅРёРјСѓРј 8 СЃРёРјРІРѕР»РѕРІ Рё РЅРµ СЃРѕСЃС‚РѕСЏС‚СЊ РїРѕР»РЅРѕСЃС‚СЊСЋ РёР· С†РёС„СЂ"
             );
           } else {
-            setErrorDoublePassword("Ошибка сервера");
+            setErrorDoublePassword("РћС€РёР±РєР° СЃРµСЂРІРµСЂР°");
           }
         });
   };
 
   return (
     <section className={`${styles.content} ${extraClass}`}>
-      <img className={`${styles.logo} mb-16`} src={logoIcon} alt="Логотип" />
+      <img className={`${styles.logo} mb-16`} src={logoIcon} alt="Р›РѕРіРѕС‚РёРї" />
       <h1
         className={`text text_type_h1 text_color_primary mb-20 ${styles.title}`}
       >
-        Регистрация
+        Р РµРіРёСЃС‚СЂР°С†РёСЏ
       </h1>
       <p
         className={`text text_type_medium-20 text_color_input mb-10 ${styles.subtitle}`}
       >
-        Зарегистрируйтесь для доступа к Kittygram!
+        Р—Р°СЂРµРіРёСЃС‚СЂРёСЂСѓР№С‚РµСЃСЊ РґР»СЏ РґРѕСЃС‚СѓРїР° Рє Kittygram!
       </p>
       <FormContainer>
         <form className={styles.form}>
@@ -91,7 +91,7 @@ export const SignUp = ({ extraClass = "" }) => {
             name="username"
             type="text"
             id={1}
-            placeholder="Имя"
+            placeholder="РРјСЏ"
             error={errorLogin}
           />
           <Input
@@ -99,7 +99,7 @@ export const SignUp = ({ extraClass = "" }) => {
             name="password"
             type="password"
             id={2}
-            placeholder="Пароль"
+            placeholder="РџР°СЂРѕР»СЊ"
             error={errorPassword}
           />
           <Input
@@ -107,27 +107,28 @@ export const SignUp = ({ extraClass = "" }) => {
             name="password2"
             type="password"
             id={3}
-            placeholder="Повторите пароль"
+            placeholder="РџРѕРІС‚РѕСЂРёС‚Рµ РїР°СЂРѕР»СЊ"
             error={errorDoublePassword}
           />
           <p
             className={`text text_type_small text_color_input ${styles.agreement}`}
           >
-            Регистрируясь на нашем сайте, вы обещаете постить в сервис только
-            котов, никаких собак.
+            Р РµРіРёСЃС‚СЂРёСЂСѓСЏСЃСЊ РЅР° РЅР°С€РµРј СЃР°Р№С‚Рµ, РІС‹ РѕР±РµС‰Р°РµС‚Рµ РїРѕСЃС‚РёС‚СЊ РІ СЃРµСЂРІРёСЃ С‚РѕР»СЊРєРѕ
+            РєРѕС‚РѕРІ, РЅРёРєР°РєРёС… СЃРѕР±Р°Рє.
           </p>
-          <ButtonForm text="Зарегистрироваться" onClick={handleSubmit} />
-          <p className="text text_type_small text_color_input mt-5 mb-5">или</p>
+          <ButtonForm text="Р—Р°СЂРµРіРёСЃС‚СЂРёСЂРѕРІР°С‚СЊСЃСЏ" onClick={handleSubmit} />
+          <p className="text text_type_small text_color_input mt-5 mb-5">РёР»Рё</p>
         </form>
         <div className={styles.footer}>
           <NavLink
             to="/signin"
             className={`text text_type_medium-16 text_color_link ${styles.nav}`}
           >
-            Уже зарегистрированы? Войти
+            РЈР¶Рµ Р·Р°СЂРµРіРёСЃС‚СЂРёСЂРѕРІР°РЅС‹? Р’РѕР№С‚Рё
           </NavLink>
         </div>
       </FormContainer>
     </section>
   );
 };
+
