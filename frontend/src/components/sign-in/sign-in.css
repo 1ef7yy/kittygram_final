@@ -1,0 +1,45 @@
+﻿/* sign-in.css - минимальный стиль для тестов */
+.sign-in {
+    font-family: Arial, sans-serif;
+}
+
+.sign-in__title {
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+.sign-in__form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.sign-in__input {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.sign-in__button {
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.sign-in__error {
+    color: red;
+    font-size: 14px;
+}
+
+.sign-in__text {
+    margin-top: 15px;
+    font-size: 14px;
+}
+
+.sign-in__link {
+    color: #007bff;
+    text-decoration: none;
+}
