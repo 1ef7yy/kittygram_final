@@ -23,6 +23,16 @@ export const logoutUser = () => {
   return Promise.resolve();
 };
 
+export const getUser = () => {
+  const token = localStorage.getItem("auth_token");
+  if (!token) {
+    return Promise.reject("No token found");
+  }
+  return fetch("/api/users/me/", {
+    headers: {"Authorization": `Token ${token}`}
+  }).then(res => res.ok ? res.json() : Promise.reject(res));
+};
+
 export const getCards = (token) => {
   return fetch("/api/cats/", {
     headers: {"Authorization": `Token ${token}`}

@@ -13,7 +13,7 @@ services:
       - pg_data:/var/lib/postgresql/data
 
   backend:
-    image: tyomaratniy/kittygram_backend
+    image: leftyyyy/kittygram_backend
     env_file: .env
     depends_on:
       - db
@@ -22,7 +22,7 @@ services:
       - media:/app/media
 
   frontend:
-    image: tyomaratniy/kittygram_frontend
+    image: leftyyyy/kittygram_frontend
     env_file: .env
     depends_on:
       - backend  
@@ -31,7 +31,7 @@ services:
       - static:/static
 
   gateway:
-    image: tyomaratniy/kittygram_gateway
+    image: leftyyyy/kittygram_gateway
     env_file: .env
     depends_on:
       - frontend  

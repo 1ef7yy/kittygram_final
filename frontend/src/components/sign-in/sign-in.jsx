@@ -1,5 +1,5 @@
 ﻿import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import { api } from "../../utils/api";
 import "./sign-in.css";
 
@@ -7,7 +7,7 @@ function SignIn({ handleLogin }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const navigate = useNavigate();
+  const history = useHistory();
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -17,7 +17,7 @@ function SignIn({ handleLogin }) {
         if (data.auth_token) {
           localStorage.setItem("token", data.auth_token);
           handleLogin();
-          navigate("/");
+          history.push("/");
         }
       })
       .catch((err) => {
@@ -61,5 +61,4 @@ function SignIn({ handleLogin }) {
   );
 }
 
-export default SignIn;
-
+export { SignIn };
