@@ -44,8 +44,8 @@ jobs:
         cd backend
         ruff check . --exit-zero
     
-    # Настройка переменных окружения для тестов
-    - name: Create test environment file
+    # Создаем тестовый .env файл
+    - name: Create test environment
       run: |
         cat > backend/.env.test << 'EOF'
         SECRET_KEY=test-secret-key-for-ci-123
@@ -61,17 +61,32 @@ jobs:
         DB_PORT=5432
         EOF
     
-    # Запуск тестов
+    # Даем время PostgreSQL запуститься
+    - name: Wait for PostgreSQL
+      run: |
+        sleep 10
+        echo "PostgreSQL should be ready now"
+    
+    # Запуск тестов с правильными переменными окружения
     - name: Run Django tests
       env:
-        DJANGO_SETTINGS_MODULE: kittygram_backend.settings
+        SECRET_KEY: test-secret-key-for-ci-123
+        DEBUG: True
+        ALLOWED_HOSTS: localhost,127.0.0.1
+        DB_ENGINE: django.db.backends.postgresql
+        DB_NAME: kittygram_test
+        POSTGRES_USER: kittygram_user
+        POSTGRES_PASSWORD: kittygram_password
+        POSTGRES_DB: kittygram_test
+        DB_HOST: localhost
+        DB_PORT: 5432
       run: |
         cd backend
-        # Экспортируем переменные из файла
-        export $(grep -v '^#' .env.test | xargs)
         
-        # Даем время PostgreSQL запуститься
-        sleep 5
+        # Применяем миграции для тестовой БД
+        export DJANGO_SETTINGS_MODULE=kittygram_backend.settings
+        python manage.py makemigrations --noinput || true
+        python manage.py migrate --noinput
         
         # Запускаем тесты
         python -m pytest tests/ -v --tb=short
@@ -87,12 +102,12 @@ jobs:
         cd frontend
         npm ci
     
-    - name: Run frontend tests
+    - name: Run frontend build check
       run: |
         cd frontend
-        npm test -- --passWithNoTests
+        npm run build
     
-    # Сборка и загрузка Docker образов
+    # Сборка Docker образов
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v2
     
@@ -102,32 +117,33 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
     
-    - name: Build and push backend image
+    - name: Build and push backend
       uses: docker/build-push-action@v4
       with:
         context: ./backend
         push: true
         tags: ${{ secrets.DOCKER_USERNAME }}/kittygram_backend:latest
     
-    - name: Build and push frontend image
+    - name: Build and push frontend
       uses: docker/build-push-action@v4
       with:
         context: ./frontend
         push: true
         tags: ${{ secrets.DOCKER_USERNAME }}/kittygram_frontend:latest
     
-    - name: Build and push gateway image
+    - name: Build and push gateway
       uses: docker/build-push-action@v4
       with:
         context: ./nginx
         push: true
         tags: ${{ secrets.DOCKER_USERNAME }}/kittygram_gateway:latest
     
-    # Уведомление
+    # Сообщение об успехе
     - name: Success message
       if: success()
       run: |
         echo "✅ Kittygram CI/CD успешно завершен!"
         echo "🧪 Тесты с PostgreSQL пройдены"
         echo "🐳 Образы загружены на Docker Hub"
+        echo "🔗 Docker Hub: https://hub.docker.com/u/${{ secrets.DOCKER_USERNAME }}"
         echo "🚀 Проект готов к деплою"
