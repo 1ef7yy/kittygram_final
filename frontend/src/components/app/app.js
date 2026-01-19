@@ -29,9 +29,19 @@ function App() {
         if (res && res.id) {
           setUserState({ id: res.id });
         }
+      }).catch(() => {
+        localStorage.removeItem("auth_token");
       });
     }
   }, []);
+
+  const handleLogin = () => {
+    getUser().then((res) => {
+      if (res && res.id) {
+        setUserState({ id: res.id });
+      }
+    });
+  };
 
   return (
     <div className={styles.app}>
@@ -44,7 +54,7 @@ function App() {
                 <MainPage queryPage={queryPage} setQueryPage={setQueryPage} />
               </ProtectedRoute>
               <Route path="/signin">
-                <SignIn />
+                <SignIn handleLogin={handleLogin} />
               </Route>
               <Route path="/signup">
                 <SignUp />

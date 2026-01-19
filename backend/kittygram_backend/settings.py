@@ -62,11 +62,11 @@ WSGI_APPLICATION = 'kittygram_backend.wsgi.application'
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "kittygram_user",           # ← Точно такое же имя как в POSTGRES_DB
-        "USER": "kittygram_user",           # ← Точно такое же имя как в POSTGRES_USER
-        "PASSWORD": "kittygram_password",   # ← Точно такой же пароль
-        "HOST": "db",                       # ← Имя сервиса из docker-compose
-        "PORT": 5432,                       # ← Порт PostgreSQL
+        "NAME": os.getenv("POSTGRES_DB", "kittygram"),
+        "USER": os.getenv("POSTGRES_USER", "kittygram_user"),
+        "PASSWORD": os.getenv("POSTGRES_PASSWORD", "kittygram_password"),
+        "HOST": os.getenv("DB_HOST", "db"),
+        "PORT": os.getenv("DB_PORT", "5432"),
     }
 }
 

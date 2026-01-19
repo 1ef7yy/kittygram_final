@@ -15,8 +15,8 @@ function SignIn({ handleLogin }) {
       .signIn({ username, password })
       .then((data) => {
         if (data.auth_token) {
-          localStorage.setItem("token", data.auth_token);
-          handleLogin();
+          localStorage.setItem("auth_token", data.auth_token);
+          handleLogin && handleLogin();
           history.push("/");
         }
       })

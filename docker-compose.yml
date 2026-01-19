@@ -38,11 +38,9 @@ services:
     env_file: .env
     depends_on:
       - backend
-    command: >
-      sh -c "cp -r /app/build/. /static/ &&
-             http-server /app/build -p 3000"
     volumes:
       - static:/static
+    command: cp -r /app/build/. /static/
 
   gateway:
     build: ./nginx/

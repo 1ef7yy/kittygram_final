@@ -19,7 +19,7 @@ export const registerUser = (userData) => {
 };
 
 export const logoutUser = () => {
-  localStorage.removeItem("token");
+  localStorage.removeItem("auth_token");
   return Promise.resolve();
 };
 
@@ -33,19 +33,22 @@ export const getUser = () => {
   }).then(res => res.ok ? res.json() : Promise.reject(res));
 };
 
-export const getCards = (token) => {
+export const getCards = () => {
+  const token = localStorage.getItem("auth_token");
   return fetch("/api/cats/", {
     headers: {"Authorization": `Token ${token}`}
   }).then(res => res.json());
 };
 
-export const getCard = (id, token) => {
+export const getCard = (id) => {
+  const token = localStorage.getItem("auth_token");
   return fetch(`/api/cats/${id}/`, {
     headers: {"Authorization": `Token ${token}`}
   }).then(res => res.json());
 };
 
-export const sendCard = (cardData, token) => {
+export const sendCard = (cardData) => {
+  const token = localStorage.getItem("auth_token");
   return fetch("/api/cats/", {
     method: "POST",
     headers: {
@@ -56,7 +59,8 @@ export const sendCard = (cardData, token) => {
   }).then(res => res.json());
 };
 
-export const updateCard = (id, cardData, token) => {
+export const updateCard = (id, cardData) => {
+  const token = localStorage.getItem("auth_token");
   return fetch(`/api/cats/${id}/`, {
     method: "PATCH",
     headers: {
@@ -67,14 +71,16 @@ export const updateCard = (id, cardData, token) => {
   }).then(res => res.json());
 };
 
-export const deleteCard = (id, token) => {
+export const deleteCard = (id) => {
+  const token = localStorage.getItem("auth_token");
   return fetch(`/api/cats/${id}/`, {
     method: "DELETE",
     headers: {"Authorization": `Token ${token}`}
   });
 };
 
-export const getAchievements = (token) => {
+export const getAchievements = () => {
+  const token = localStorage.getItem("auth_token");
   return fetch("/api/achievements/", {
     headers: {"Authorization": `Token ${token}`}
   }).then(res => res.json());

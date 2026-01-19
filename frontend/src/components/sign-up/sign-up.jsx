@@ -28,70 +28,79 @@ export const SignUp = ({ extraClass = "" }) => {
 
   const checkValid = () => {
     if (!userData.username) {
-      setErrorLogin("РџРѕР»Рµ СЃ РёРјРµРЅРµРј СЏРІР»СЏРµС‚СЃСЏ РѕР±СЏР·Р°С‚РµР»СЊРЅС‹Рј");
+      setErrorLogin("Поле с именем является обязательным");
       return false;
     }
     if (!userData.password) {
-      setErrorPassword("РџРѕР»Рµ СЃ РїР°СЂРѕР»РµРј СЏРІР»СЏРµС‚СЃСЏ РѕР±СЏР·Р°С‚РµР»СЊРЅС‹Рј");
+      setErrorPassword("Поле с паролем является обязательным");
       return false;
     }
     if (!userData.password2) {
-      setErrorDoublePassword("РџРѕР»Рµ СЃ РїР°СЂРѕР»РµРј СЏРІР»СЏРµС‚СЃСЏ РѕР±СЏР·Р°С‚РµР»СЊРЅС‹Рј");
+      setErrorDoublePassword("Поле с паролем является обязательным");
       return false;
     }
     if (userData.password !== userData.password2) {
-      setErrorDoublePassword("РџР°СЂРѕР»Рё РЅРµ СЃРѕРІРїР°РґР°СЋС‚!");
+      setErrorDoublePassword("Пароли не совпадают!");
       return false;
     }
     return true;
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = (e) => {
+    e && e.preventDefault();
     errorDoublePassword && setErrorDoublePassword("");
     errorLogin && setErrorLogin("");
     errorPassword && setErrorPassword("");
 
-    checkValid() &&
-      registerUser(userData.username, userData.password)
-        .then((res) => {
-          if (res && res.username) {
-            history.replace({ pathname: "/signin" });
-          }
-        })
-        .catch((err) => {
-          if (typeof err.username === "object") {
-            setErrorLogin("РџРѕР»СЊР·РѕРІР°С‚РµР»СЊ СЃ С‚Р°РєРёРј РёРјРµРЅРµРј СѓР¶Рµ Р·Р°СЂРµРіРёСЃС‚СЂРёСЂРѕРІР°РЅ");
-          } else if (typeof err.password === "object") {
-            setErrorPassword(
-              "РџР°СЂРѕР»СЊ РґРѕР»Р¶РµРЅ СЃРѕРґРµСЂР¶Р°С‚СЊ РјРёРЅРёРјСѓРј 8 СЃРёРјРІРѕР»РѕРІ Рё РЅРµ СЃРѕСЃС‚РѕСЏС‚СЊ РїРѕР»РЅРѕСЃС‚СЊСЋ РёР· С†РёС„СЂ"
-            );
-          } else {
-            setErrorDoublePassword("РћС€РёР±РєР° СЃРµСЂРІРµСЂР°");
-          }
-        });
+    if (!checkValid()) return;
+
+    registerUser(userData)
+      .then((res) => {
+        if (res && res.username) {
+          history.replace({ pathname: "/signin" });
+        }
+      })
+      .catch((err) => {
+        console.error("Registration error:", err);
+        if (err.json) {
+          err.json().then(errorData => {
+            if (errorData.username) {
+              setErrorLogin("Пользователь с таким именем уже зарегистрирован");
+            } else if (errorData.password) {
+              setErrorPassword(
+                "Пароль должен содержать минимум 8 символов и не состоять полностью из цифр"
+              );
+            } else {
+              setErrorDoublePassword("Ошибка сервера");
+            }
+          });
+        } else {
+          setErrorDoublePassword("Ошибка сервера");
+        }
+      });
   };
 
   return (
     <section className={`${styles.content} ${extraClass}`}>
-      <img className={`${styles.logo} mb-16`} src={logoIcon} alt="Р›РѕРіРѕС‚РёРї" />
+      <img className={`${styles.logo} mb-16`} src={logoIcon} alt="Логотип" />
       <h1
         className={`text text_type_h1 text_color_primary mb-20 ${styles.title}`}
       >
-        Р РµРіРёСЃС‚СЂР°С†РёСЏ
+        Регистрация
       </h1>
       <p
         className={`text text_type_medium-20 text_color_input mb-10 ${styles.subtitle}`}
       >
-        Р—Р°СЂРµРіРёСЃС‚СЂРёСЂСѓР№С‚РµСЃСЊ РґР»СЏ РґРѕСЃС‚СѓРїР° Рє Kittygram!
+        Зарегистрируйтесь для доступа к Kittygram!
       </p>
       <FormContainer>
-        <form className={styles.form}>
+        <form className={styles.form} onSubmit={handleSubmit}>
           <Input
             onChange={onChangeInput}
             name="username"
             type="text"
             id={1}
-            placeholder="РРјСЏ"
+            placeholder="Имя"
             error={errorLogin}
           />
           <Input
@@ -99,7 +108,7 @@ export const SignUp = ({ extraClass = "" }) => {
             name="password"
             type="password"
             id={2}
-            placeholder="РџР°СЂРѕР»СЊ"
+            placeholder="Пароль"
             error={errorPassword}
           />
           <Input
@@ -107,24 +116,24 @@ export const SignUp = ({ extraClass = "" }) => {
             name="password2"
             type="password"
             id={3}
-            placeholder="РџРѕРІС‚РѕСЂРёС‚Рµ РїР°СЂРѕР»СЊ"
+            placeholder="Повторите пароль"
             error={errorDoublePassword}
           />
           <p
             className={`text text_type_small text_color_input ${styles.agreement}`}
           >
-            Р РµРіРёСЃС‚СЂРёСЂСѓСЏСЃСЊ РЅР° РЅР°С€РµРј СЃР°Р№С‚Рµ, РІС‹ РѕР±РµС‰Р°РµС‚Рµ РїРѕСЃС‚РёС‚СЊ РІ СЃРµСЂРІРёСЃ С‚РѕР»СЊРєРѕ
-            РєРѕС‚РѕРІ, РЅРёРєР°РєРёС… СЃРѕР±Р°Рє.
+            Регистрируясь на нашем сайте, вы обещаете постить в сервис только
+            котов, никаких собак.
           </p>
-          <ButtonForm text="Р—Р°СЂРµРіРёСЃС‚СЂРёСЂРѕРІР°С‚СЊСЃСЏ" onClick={handleSubmit} />
-          <p className="text text_type_small text_color_input mt-5 mb-5">РёР»Рё</p>
+          <ButtonForm text="Зарегистрироваться" type="submit" onClick={handleSubmit} />
+          <p className="text text_type_small text_color_input mt-5 mb-5">или</p>
         </form>
         <div className={styles.footer}>
           <NavLink
             to="/signin"
             className={`text text_type_medium-16 text_color_link ${styles.nav}`}
           >
-            РЈР¶Рµ Р·Р°СЂРµРіРёСЃС‚СЂРёСЂРѕРІР°РЅС‹? Р’РѕР№С‚Рё
+            Уже зарегистрированы? Войти
           </NavLink>
         </div>
       </FormContainer>
