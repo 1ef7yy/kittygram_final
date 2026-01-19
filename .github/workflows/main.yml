@@ -7,40 +7,40 @@ on:
 jobs:
   test-and-deploy:
     runs-on: ubuntu-latest
-    
+
     steps:
     # 1. Проверка кода
     - name: Checkout code
       uses: actions/checkout@v3
-    
+
     # 2. Тестирование бэкенда (ruff)
     - name: Setup Python for backend testing
       uses: actions/setup-python@v4
       with:
         python-version: "3.9"
-    
+
     - name: Install backend dependencies
       run: |
         cd backend
         pip install -r requirements.txt
         pip install ruff
-    
+
     - name: Run ruff linter
       run: |
         cd backend
         ruff check . --exit-zero
-    
+
     # 3. Тестирование фронтенда (игнорируем ошибки CSS)
     - name: Setup Node.js for frontend
       uses: actions/setup-node@v3
       with:
         node-version: "18"
-    
+
     - name: Install frontend dependencies
       run: |
         cd frontend
         npm ci
-    
+
     - name: Create missing CSS files for tests
       run: |
         cd frontend
@@ -54,43 +54,44 @@ jobs:
           echo "/* sign-up.css */" > src/components/sign-up/sign-up.css
         fi
         echo "✅ CSS файлы созданы"
-    
+
     - name: Run frontend tests
       run: |
         cd frontend
+        npm i
         npm test -- --passWithNoTests --watchAll=false || echo "Тесты завершены"
-    
+
     # 4. Сборка и загрузка Docker образов
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v2
-    
+
     - name: Login to Docker Hub
       uses: docker/login-action@v2
       with:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
-    
+
     - name: Build and push backend image
       uses: docker/build-push-action@v4
       with:
         context: ./backend
         push: true
         tags: ${{ secrets.DOCKER_USERNAME }}/kittygram_backend:latest
-    
+
     - name: Build and push frontend image
       uses: docker/build-push-action@v4
       with:
         context: ./frontend
         push: true
         tags: ${{ secrets.DOCKER_USERNAME }}/kittygram_frontend:latest
-    
+
     - name: Build and push gateway image
       uses: docker/build-push-action@v4
       with:
         context: ./nginx
         push: true
         tags: ${{ secrets.DOCKER_USERNAME }}/kittygram_gateway:latest
-    
+
     # 5. Уведомление в Telegram
     - name: Send Telegram notification
       if: success()
@@ -100,11 +101,11 @@ jobs:
         token: ${{ secrets.TELEGRAM_TOKEN }}
         message: |
           ✅ *Kittygram CI/CD успешно завершен!*
-          
+
           • Ruff проверка пройдена
           • Тесты выполнены
           • Образы загружены на Docker Hub
-          
+
           🐳 Docker Hub: https://hub.docker.com/u/${{ secrets.DOCKER_USERNAME }}
           🔗 GitHub: https://github.com/${{ github.repository }}
           🚀 Проект готов к проверке
